@@ -95,3 +95,4 @@ env-spmcm/
 *.png
 .vscode/
 .pytest-cache
+Support/
