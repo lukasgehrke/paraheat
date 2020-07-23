@@ -46,7 +46,7 @@ class Heat:
         self.extent = [0, self.bg_image.shape[1], self.bg_image.shape[0], 0]
         # print(self.extent)
 
-    def histogram2d(self, bins):
+    def histogram2d(self, bins=None):
 
         if bins is not None:
             bins_in = bins
@@ -58,6 +58,10 @@ class Heat:
         hist, xedges, yedges = np.histogram2d(self.data.X, self.data.Y, bins=bins_in)
 
         return hist, xedges, yedges
+
+    def histogram3d(self, bins=None):
+
+        hist = np.histogramdd()
 
     def gaussian(self, image, sigma=5):
 
