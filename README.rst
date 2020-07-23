@@ -1,4 +1,4 @@
-Sample Module Repository
+heat: parametric mapping of physiological metrics of user experience
 ========================
 
 This simple project is an example repo for Python projects.
