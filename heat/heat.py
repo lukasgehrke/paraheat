@@ -1,4 +1,5 @@
-# this class controls the handling of several trials, it creates heatmaps for each trials and coordinates the processing pipeline
+# create a heatmap out of timeseries input data and keep the data structure
+# keep this very simple, stupid
 
 # checks data structure whether 2D, 3D or 4D
 
@@ -6,17 +7,8 @@ import numpy as np
 import pandas as pd
 # import matplotlib.image as mpimg
 
-from scipy import stats
-import scipy.spatial as sp
-from scipy.ndimage import gaussian_filter
-
 from dataclasses import dataclass
 from typing import List
-
-#from heat.heatmap import Heatmap
-#from heat.projection import Projection
-
-# import heat
 
 @dataclass
 class Heat:
@@ -63,65 +55,61 @@ class Heat:
 
         hist = np.histogramdd()
 
-    def gaussian(self, image, sigma=5):
-
-        gaussian_image = gaussian_filter(image, sigma=sigma)
-
-        return gaussian_image
-
-    def zscore(self, image):
-
-        zscored_image = stats.zscore(image, axis=None)
-
-        return zscored_image
-
     def select_aoi(self, aoi):
+        # cut out polynom from data and retain either the whats outside or inside
         pass
 
-    def transform_data_to_view_coord(self, p, resolution, pmin, pmax):
-        """
-        Fit data to image resolution
 
-        Args:
-            p ([type]): [description]
-            resolution ([type]): [description]
-            pmin ([type]): [description]
-            pmax ([type]): [description]
 
-        Returns:
-            [type]: [description]
-        """
 
-        dp = pmax - pmin
-        dv = (p - pmin) / dp * resolution
 
-        return dv
 
-    def knn2d(self, neighbours=32, dim=2):
-        """[summary]
+# Stuff for later implementation
+# import scipy.spatial as sp
+    # def transform_data_to_view_coord(self, p, resolution, pmin, pmax):
+    #     """
+    #     Fit data to image resolution
 
-        Args:
-            x ([type]): [description]
-            y ([type]): [description]
-            resolution ([type]): [description]
-            neighbours (int, optional): [description]. Defaults to 32.
-            dim (int, optional): [description]. Defaults to 2.
+    #     Args:
+    #         p ([type]): [description]
+    #         resolution ([type]): [description]
+    #         pmin ([type]): [description]
+    #         pmax ([type]): [description]
 
-        Returns:
-            [type]: [description]
-        """
+    #     Returns:
+    #         [type]: [description]
+    #     """
 
-        # Create the tree
-        tree = sp.cKDTree(self.data)
-        # Find the closest nnmax-1 neighbors (first entry is the point itself)
+    #     dp = pmax - pmin
+    #     dv = (p - pmin) / dp * resolution
 
-        # import pdb; pdb.set_trace()
-        grid = np.mgrid[0:self.bg_image.shape[0], 0:self.bg_image.shape[1]].T.reshape(self.bg_image.shape[0]*self.bg_image.shape[1], dim)
+    #     return dv
 
-        dists = tree.query(grid, neighbours)
-        # Inverse of the sum of distances to each grid point.
-        inv_sum_dists = 1. / dists[0].sum(1)
+    # def knn2d(self, neighbours=32, dim=2):
+    #     """[summary]
 
-        # Reshape
-        im = inv_sum_dists.reshape(self.bg_image.shape[0], self.bg_image.shape[1])
-        return im
+    #     Args:
+    #         x ([type]): [description]
+    #         y ([type]): [description]
+    #         resolution ([type]): [description]
+    #         neighbours (int, optional): [description]. Defaults to 32.
+    #         dim (int, optional): [description]. Defaults to 2.
+
+    #     Returns:
+    #         [type]: [description]
+    #     """
+
+    #     # Create the tree
+    #     tree = sp.cKDTree(self.data)
+    #     # Find the closest nnmax-1 neighbors (first entry is the point itself)
+
+    #     # import pdb; pdb.set_trace()
+    #     grid = np.mgrid[0:self.bg_image.shape[0], 0:self.bg_image.shape[1]].T.reshape(self.bg_image.shape[0]*self.bg_image.shape[1], dim)
+
+    #     dists = tree.query(grid, neighbours)
+    #     # Inverse of the sum of distances to each grid point.
+    #     inv_sum_dists = 1. / dists[0].sum(1)
+
+    #     # Reshape
+    #     im = inv_sum_dists.reshape(self.bg_image.shape[0], self.bg_image.shape[1])
+    #     return im
