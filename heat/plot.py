@@ -8,10 +8,10 @@ import numpy as np
 
 class Plot:
 
-    def __init__(self, heat, fig_size=(16,9)):
+    def __init__(self, heat, bg_image, extent, fig_size=(16,9)):
         self.map = heat.heatmap
-        self.extent = heat.extent
-        self.bg_image = heat.bg_image
+        self.extent = extent
+        self.bg_image = bg_image
 
         self.cm = plt.cm.jet
 
@@ -32,7 +32,10 @@ class Plot:
         plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
         plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
-    def heat_xy(self, title="heat", lims=[0,1], superimpose_on_bg=False):
+    def create_plot_window(self):
+        fig, ax = p.create_plot_window()
+
+    def heat_xy(self, title="heat", lims=[0,1], superimpose_on_bg=False, mask=None):
 
         fig, ax = plt.subplots(figsize=(self.fig_size))
 
@@ -40,6 +43,10 @@ class Plot:
             ax.imshow(self.bg_image,
                 alpha=self.bg_image_alpha,
                 origin=self.origin)
+
+        if mask is not None:
+            contours = plt.contour(mask, levels=1, colors='black')
+            plt.clabel(contours, inline=True, fontsize=8)
 
         heat_plot = ax.imshow(self.map,
             extent=self.extent,

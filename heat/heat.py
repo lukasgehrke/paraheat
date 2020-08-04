@@ -1,10 +1,14 @@
 # create a heatmap out of timeseries input data and keep the data structure
+# can always be directly used for single subject data as well as at the end to prepare plot? otherwise is used by Analyses to prepare per participant binning
 # keep this very simple, stupid
+# might have more function for binning later on down the road and can cutout a polygon from the input data before hist binning
 
 # checks data structure whether 2D, 3D or 4D
 
 import numpy as np
 import pandas as pd
+from scipy import stats
+
 # import matplotlib.image as mpimg
 
 from dataclasses import dataclass
@@ -12,11 +16,17 @@ from typing import List
 
 @dataclass
 class Heat:
+    """Wrapper class built around scipy's binned_statistic functions
+
+    Returns:
+        [type]: [description]
+    """
 
     name: str
     data: pd.DataFrame
     heatmap: np.array
-    bg_image: np.array
+
+    # bg_image: np.array
 
     # edges: (interquantile range [5 95] across all participants)
     # edges: List[float]
@@ -25,31 +35,47 @@ class Heat:
     # projections: List[heat.Projection]
 
     def __post_init__(self):
-        """[]
-        """
 
-        # provide bins and edges or the program makes an educated guess
-        # freedman rule
-        # self.bins = int(np.log2(max(self.bg_image.shape)) * 10)
-        # print(self.bins)
+        if self.data is not None:
+            self.col_names = list(self.data.columns)
 
-        # get resolution
-        # self.extent = [self.data.X.min(), self.data.X.max(), self.data.Y.min(), self.data.Y.max()]
-        self.extent = [0, self.bg_image.shape[1], self.bg_image.shape[0], 0]
-        # print(self.extent)
+    #     if self.data.shape[1] is 2:
+    #         self.data.Z = None
 
-    def histogram2d(self, bins=None):
 
-        if bins is not None:
-            bins_in = bins
-        else:
-            # provide bins and edges or the program makes an educated guess
-            # freedman rule
-            bins_in = int(np.log2(max(self.bg_image.shape)) * 10)
+    #     """[]
+    #     """
 
-        hist, xedges, yedges = np.histogram2d(self.data.X, self.data.Y, bins=bins_in)
+    #     # provide bins and edges or the program makes an educated guess
+    #     # freedman rule
+    #     # self.bins = int(np.log2(max(self.bg_image.shape)) * 10)
+    #     # print(self.bins)
 
-        return hist, xedges, yedges
+    #     # get resolution
+    #     # self.extent = [self.data.X.min(), self.data.X.max(), self.data.Y.min(), self.data.Y.max()]
+    #     # self.extent = [0, self.bg_image.shape[1], self.bg_image.shape[0], 0]
+    #     # print(self.extent)
+
+    #wrapper for 2d binning
+
+
+    def binned_statistic(self, bins=None, agg_stats_func='count'):
+
+        # if bins is not None:
+        #     bins_in = bins
+        # else:
+        #     # provide bins and edges or the program makes an educated guess
+        #     # freedman rule
+        #     bins_in = int(np.log2(max(self.bg_image.shape)) * 10)
+
+        # hist, xedges, yedges = np.histogram2d(self.data.X, self.data.Y, bins=bins_in)
+
+        # return hist, xedges, yedges
+
+        if len(self.col_names) == 2:
+            ret = stats.binned_statistic_2d(self.data[self.col_names[0]], self.data[self.col_names[1]], None, agg_stats_func, bins=bins)
+
+            return ret
 
     def histogram3d(self, bins=None):
 

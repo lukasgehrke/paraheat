@@ -6,8 +6,8 @@ import pandas as pd
 # refactor imports below
 from scipy.ndimage import gaussian_filter
 
-def zscore(pd_df) -> zscored_df:
+def zscore(pd_df):
     return (pd_df - pd_df.mean())/pd_df.std()
 
-def gaussian(image, sigma=5) -> filtered_image:
+def gaussian(image, sigma=5):
     return gaussian_filter(image, sigma=sigma)
