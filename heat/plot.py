@@ -83,13 +83,6 @@ class Plot:
         cax = divider.append_axes("right", size="2.5%", pad=0.1)
         plt.colorbar(heat_plot, cax=cax)
 
-        # TODO remove and change later
-        plt.savefig(title+'.png', dpi=300, bbox_inches='tight')
-
-        # render
-        plt.show()
-
-
     def heat_c(self):
         print(self.map)
 
@@ -110,8 +103,12 @@ class Plot:
         # - rescale to input image size using subsampling scaling factor
         pass
 
-    def export(self):
-        pass
+    def show(self):
+        plt.show()
+
+    def export(self, savepath, filename):
+        # TODO remove and change later
+        plt.savefig(savepath+filename+'.png', dpi=300, bbox_inches='tight')
 
     # use imshow to plot both heatmap and bg_image so they can be overlayed
 
