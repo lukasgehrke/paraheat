@@ -48,21 +48,17 @@ def add_background_image(bg_image, ax,
     # TODO refactor to set default values
     ax.imshow(bg_image, alpha=alpha, origin=origin)
 
-def add_heat(array_like, ax, extent, alpha=1, cm=plt.cm.jet, origin="upper"):
+def add_heat(array_like, ax, extent, alpha=1, cm=plt.cm.jet, origin="upper",
+    add_contour=False, contour_mask=None, levels=1):
 
     heat = ax.imshow(array_like, extent=extent, origin=origin,
         alpha=alpha, cmap=cm)
 
+    if add_contour:
+        contours = ax.contour(contour_mask, 1, extent=extent, levels=levels, colors='black')
+        ax.clabel(contours, inline=True, fontsize=8)
+
     return heat
-
-def overlay_contour(ax, mask,
-    levels=1, colors="black",
-    clabel_fontsize=8, clabel_inline=True):
-
-    # TODO adds a significance mask / contour over what is present in the axes and
-    # scales to what was drawn there before
-    contours = plt.contour(mask, levels=levels, colors=colors)
-    plt.clabel(contours, inline=clabel_inline, fontsize=clabel_fontsize)
 
 def poly_mask(array_like, polygon_points):
     # convolve heatmap with boolean matrix of polygon cutout

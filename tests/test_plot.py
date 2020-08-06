@@ -11,7 +11,7 @@ import heat.plot as ph
 
 # generate some realistic pandas random data and write tests to generate the tests i desire :)
 rng = np.random.default_rng()
-df = pd.DataFrame(rng.integers(0, 100, size=(100, 2)), columns=list('XY'))
+df = pd.DataFrame(rng.integers(0, 100, size=(100000, 2)), columns=list('XY'))
 binx = np.arange(0,100,1)
 biny = binx
 
@@ -43,6 +43,7 @@ def test_make_axes_publication_ready():
     pass
 
 def test_make_plot():
+    # more like a functional test...
 
     # plot settings and parameters
     extent = ph.get_image_extent(bg_img)
@@ -52,7 +53,11 @@ def test_make_plot():
     fig, ax = ph.create_figure_axes(1)
     ph.add_background_image(bg_img, ax)
 
-    heat = ph.add_heat(ret.statistic, ax, extent, cm=my_cm)
+    mask = ret.statistic# > 1
+    levels = [15]
+
+    heat = ph.add_heat(ret.statistic, ax, extent, cm=my_cm, add_contour=True, contour_mask=mask, levels=levels)
+
     ph.add_colorbar(heat, ax)
 
     ph.set_labelnames(ax, title="some title", xlabel="some x label", ylabel="some y label")
