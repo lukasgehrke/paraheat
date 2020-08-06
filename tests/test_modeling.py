@@ -24,5 +24,10 @@ def test_ttest_per_bin():
     m = Modeling()
     res = m.ttest_per_bin(df, "conds", cond1, cond2)
 
-def test_else():
-    pass
+def test_OLS():
+
+    import numpy as np
+    # import statsmodels.api as sm
+
+    spector_data = sm.datasets.spector.load(as_pandas=False)
+    spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
