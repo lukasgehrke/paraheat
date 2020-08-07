@@ -1,8 +1,9 @@
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+from patsy import dmatrices
 
-from scipy import stats
+from scipy import stats # remove and only use statsmodels later on
 
 # from heat import heat
 
@@ -19,19 +20,68 @@ class Modeling:
     # def make to long format and retain shape of input data to later reshape before returning results
 
     # fit different GLM, etc.
-    def fitlm(self, data, design_matrix, model):
-        pass
+    @staticmethod
+    def fit_lm(df, model):
+        # wrapper for statsmodels OLS
+        # prepare data using patsy designmatrix
+        # fit using statsmodels OLS
 
-    def fitlm_per_bin(self, model, design, data):
-        pass
+        # simple statsmodels approach
+        y, X = dmatrices(model, data=df, return_type='dataframe')
+        mod = sm.OLS(y, X)
+        res = mod.fit()
 
-        # save 2D data shape
-        # ravel 2D data
-        # run through every data point, check if more then 12 participant have data, if yes run analyses, else set to NaN
+        # TODO for first point with 80% of data points, plot regressions diagnostics
 
-    def aov_per_bin(self):
-        pass
+        return res.params, res.rsquared #adjusted rsquared # pack_results !
 
+    @staticmethod
+    def fit_robust_lm(df, model):
+        # wrapper for statsmodels OLS
+        # prepare data using patsy designmatrix
+        # fit using statsmodels OLS
+
+        # simple statsmodels approach
+        y, X = dmatrices(model, data=df, return_type='dataframe')
+        mod = sm.RLM(y, X, M=sm.robust.norms.HuberT())
+        res = mod.fit()
+
+        # TODO for first point with 80% of data points, plot regressions diagnostics
+
+        return res.params, res.bse #adjusted rsquared # pack_results !
+
+    @staticmethod
+    def fit_lm_per_bin(df, model):
+
+        dep_var_name = [model.partition("~")[0][:-1]]
+
+        pred_var_names = model.partition("~")[2]
+        pred_var_names = pred_var_names.split("+")
+        pred_var_names = [x.strip(' ') for x in pred_var_names]
+
+        data_vars = [x for x in df.columns if x not in dep_var_name+pred_var_names]
+
+        coeffs = {}
+        rsqs = {}
+
+        for column in data_vars:
+            d_tmp = df[[column]+pred_var_names]
+            d_tmp = d_tmp.rename(index = {0:dep_var_name})
+
+            # run through every data point, check if more then 12 participant have data, if yes run analyses, else set to NaN
+            # TODO run data checks here before fitlm to speed up analyses !!
+            # skip points and save empty results
+            # document in some way
+
+            coeff, rsq = fit_lm(d_tmp, model)
+
+            # add the output to the dictionary
+            coeffs[column] = coeff
+            rsqs[column] = rsq
+
+        return coeffs, rsqs
+
+    # maybe remove and use only fitlm
     def ttest(self, group1, group2):
         # maybe change to a faster implementation?
         return stats.ttest_ind(group1,group2)

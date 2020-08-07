@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 
 # import class
 from heat.modeling import Modeling
 
-# generate random data
+# generate random data or take from crd as default
 rng = np.random.default_rng()
 df = pd.DataFrame(rng.integers(0, 100, size=(100, 5)), columns=list('ABCDE'))
 
@@ -26,8 +27,35 @@ def test_ttest_per_bin():
 
 def test_OLS():
 
-    import numpy as np
-    # import statsmodels.api as sm
+    df = sm.datasets.get_rdataset("Guerry", "HistData").data # use crd data for testing !!
 
-    spector_data = sm.datasets.spector.load(as_pandas=False)
-    spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
+    vars = ['Department', 'Lottery', 'Literacy', 'Wealth', 'Region']
+    df = df[vars]
+    df = df.dropna()
+
+    pars, rsq = Modeling.fit_lm(df, 'Lottery ~ Literacy + Wealth')
+
+    assert pars.shape[0] == 3, "intercept plus number of regressors is returned"
+
+def test_RLM():
+
+    df = sm.datasets.get_rdataset("Guerry", "HistData").data # use crd data for testing !!
+
+    vars = ['Department', 'Lottery', 'Literacy', 'Wealth', 'Region']
+    df = df[vars]
+    df = df.dropna()
+
+    pars, bse = Modeling.fit_robust_lm(df, 'Lottery ~ Literacy + Wealth')
+
+    assert pars.shape[0] == 3, "intercept plus number of regressors is returned"
+
+def test_fit_lm_per_bin():
+
+    df = sm.datasets.get_rdataset("Guerry", "HistData").data # use crd data for testing !!
+
+    vars = ['Department', 'Lottery', 'Literacy', 'Wealth', 'Region']
+    df = df[vars]
+    df = df.dropna()
+
+    pars, bse = Modeling.fit_lm_per_bin(df, 'Lottery ~ Literacy + Wealth')
+
