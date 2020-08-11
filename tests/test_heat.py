@@ -1,7 +1,7 @@
 import pandas as pd
 
 # import class
-from heat.heat import Heat
+from heat.paraheat import ParaHeat
 
 # TODO generate random data
 
@@ -11,11 +11,11 @@ s5 = df[df['pID'] == 5]
 s5 = s5[['X', 'Y']]
 
 def test_create_heat():
-    h = Heat('workhigh', s5, None)
+    h = ParaHeat('workhigh', s5, None)
     assert h.name == 'workhigh'
 
 def test_compute_binned_statistic():
     bins = 100
-    h = Heat('workhigh', s5, None)
+    h = ParaHeat('workhigh', s5, None)
     h.heatmap = h.binned_statistic(bins=bins)
     assert h.heatmap.statistic.size == bins**2

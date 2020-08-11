@@ -1,6 +1,6 @@
 import abc
 
-from heat import Analyses
+# from heat import Analyses
 
 class MCC(abc.ABC):
 
@@ -14,3 +14,5 @@ class MCC_MNE(MCC):
 
     def permutation_ttest(self):
         print('needs to be implemented')
+
+    # def permutation_a

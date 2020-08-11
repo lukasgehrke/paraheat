@@ -12,10 +12,12 @@ from scipy import stats
 # import matplotlib.image as mpimg
 
 from dataclasses import dataclass
-from typing import List
+
+# TODO
+# - call binned_statistic during construction, so attribute heatmap of paraheat is always there
 
 @dataclass
-class Heat:
+class ParaHeat:
     """Wrapper class built around scipy's binned_statistic functions
 
     Returns:
@@ -24,7 +26,7 @@ class Heat:
 
     name: str
     data: pd.DataFrame
-    heatmap: np.array
+    heatmap: None
 
     # bg_image: np.array
 
@@ -58,6 +60,9 @@ class Heat:
 
     #wrapper for 2d binning
 
+    def create_binned_statistic(self):
+        # builder pattern to set variable and call correct binned_statistic computation
+        pass
 
     def binned_statistic(self, bins=None, agg_stats_func='count'):
 

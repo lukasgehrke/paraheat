@@ -3,11 +3,22 @@ import pandas as pd
 import statsmodels.api as sm
 
 # import class
-from heat.modeling import Modeling
+from heat.paraheat import ParaHeat
+import heat.modeling as modeling
 
-# generate random data or take from crd as default
-rng = np.random.default_rng()
-df = pd.DataFrame(rng.integers(0, 100, size=(100, 5)), columns=list('ABCDE'))
+# TODO create a dummy paraheat object from dummy data for testing purposes
+# rng = np.random.default_rng()
+# df = pd.DataFrame(rng.integers(0, 100, size=(100, 5)), columns=list('ABCDE'))
+
+# for now use crd data
+bike_plow_whigh = pd.read_csv('/Users/lukasgehrke/Documents/temp/chatham/crd_gaze_phys-LOW_work-HIGH_equip-Bike_all_good_s.csv')
+tread_plow_whigh = pd.read_csv('/Users/lukasgehrke/Documents/temp/chatham/crd_gaze_phys-LOW_work-HIGH_equip-Treadmill_all_good_s.csv')
+tmp_p = tread_plow_whigh[tread_plow_whigh['pID'] == 2]
+tmp_p = tmp_p[['X', 'Y']]
+
+# paraheat object from dummy data
+h = ParaHeat('2', tmp_p, None)
+h.heatmap = h.binned_statistic(bins=25) # this is tested in other test class
 
 def test_ttest_per_bin():
 
@@ -33,7 +44,7 @@ def test_OLS():
     df = df[vars]
     df = df.dropna()
 
-    pars, rsq = Modeling.fit_lm(df, 'Lottery ~ Literacy + Wealth')
+    pars, rsq = Modeling.fit_OLS(df, 'Lottery ~ Literacy + Wealth')
 
     assert pars.shape[0] == 3, "intercept plus number of regressors is returned"
 
@@ -51,11 +62,14 @@ def test_RLM():
 
 def test_fit_lm_per_bin():
 
-    df = sm.datasets.get_rdataset("Guerry", "HistData").data # use crd data for testing !!
+    # generate random regressor
+    rng = np.random.default_rng()
+    # reg = pd.DataFrame(rng.integers(0, 100, size=(crd_1s.shape[0], 1)), columns=['reg'])
 
-    vars = ['Department', 'Lottery', 'Literacy', 'Wealth', 'Region']
-    df = df[vars]
-    df = df.dropna()
+    # h.heatmap.statistic.ravel().shape
 
-    pars, bse = Modeling.fit_lm_per_bin(df, 'Lottery ~ Literacy + Wealth')
+    crd_1s.reset_index(drop=True, inplace=True)
+    data = pd.concat([crd_1s, reg], axis=1)
+
+    pars, bse = Modeling.fit_lm_per_bin(data, 'pixel ~ reg')
 
