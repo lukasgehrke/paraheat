@@ -5,6 +5,8 @@
 
 # checks data structure whether 2D, 3D or 4D
 
+import abc
+
 import numpy as np
 import pandas as pd
 from scipy import stats
@@ -28,67 +30,62 @@ class ParaHeat:
     data: pd.DataFrame
     heatmap: None
 
-    # bg_image: np.array
-
-    # edges: (interquantile range [5 95] across all participants)
-    # edges: List[float]
-
-    # heatmaps: List[heat.Map]
-    # projections: List[heat.Projection]
-
     def __post_init__(self):
 
         if self.data is not None:
             self.col_names = list(self.data.columns)
 
-    #     if self.data.shape[1] is 2:
-    #         self.data.Z = None
-
-
-    #     """[]
-    #     """
-
-    #     # provide bins and edges or the program makes an educated guess
-    #     # freedman rule
-    #     # self.bins = int(np.log2(max(self.bg_image.shape)) * 10)
-    #     # print(self.bins)
-
-    #     # get resolution
-    #     # self.extent = [self.data.X.min(), self.data.X.max(), self.data.Y.min(), self.data.Y.max()]
-    #     # self.extent = [0, self.bg_image.shape[1], self.bg_image.shape[0], 0]
-    #     # print(self.extent)
-
-    #wrapper for 2d binning
-
-    def create_binned_statistic(self):
-        # builder pattern to set variable and call correct binned_statistic computation
+    @abc.abstractmethod
+    def binned_statistic(self):
         pass
+
+    @abc.abstractmethod
+    def select_aoi(self):
+        pass
+
+@dataclass
+class ParaHeat2D(ParaHeat):
 
     def binned_statistic(self, bins=None, agg_stats_func='count'):
 
-        # if bins is not None:
-        #     bins_in = bins
-        # else:
-        #     # provide bins and edges or the program makes an educated guess
-        #     # freedman rule
-        #     bins_in = int(np.log2(max(self.bg_image.shape)) * 10)
-
-        # hist, xedges, yedges = np.histogram2d(self.data.X, self.data.Y, bins=bins_in)
+        # provide bins and edges or the program makes an educated guess
+        # freedman rule
+        if bins is None:
+            bins = freedman_bins(self.bg_image.shape)
 
         # return hist, xedges, yedges
-
-        if len(self.col_names) == 2:
-            ret = stats.binned_statistic_2d(self.data[self.col_names[0]], self.data[self.col_names[1]], None, agg_stats_func, bins=bins)
-
-            return ret
-
-    def histogram3d(self, bins=None):
-
-        hist = np.histogramdd()
+        ret = stats.binned_statistic_2d(self.data[self.col_names[0]], self.data[self.col_names[1]],
+            None, agg_stats_func, bins=bins)
+        return ret
 
     def select_aoi(self, aoi):
         # cut out polynom from data and retain either the whats outside or inside
         pass
+
+@dataclass
+class ParaHeat3D(ParaHeat):
+
+    def binned_statistic(self):
+
+        # return hist, xedges, yedges
+        ret = stats.binned_statistic_2d(self.data[self.col_names[0]], self.data[self.col_names[1]], self.data[self.col_names[2]],
+            agg_stats_func, bins=bins)
+        return ret
+
+    def select_aoi(self):
+        pass
+
+def freedman_bins(size):
+    # provide bins and edges or the program makes an educated guess
+    # freedman rule
+    return int(np.log2(max(size)) * 10)
+
+
+
+
+
+
+
 
 
 

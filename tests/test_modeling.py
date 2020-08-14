@@ -3,7 +3,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 # import class
-from heat.paraheat import ParaHeat
+from heat.paraheat import ParaHeat2D
 import heat.modeling as modeling
 
 # TODO create a dummy paraheat object from dummy data for testing purposes
@@ -17,7 +17,7 @@ tmp_p = tread_plow_whigh[tread_plow_whigh['pID'] == 2]
 tmp_p = tmp_p[['X', 'Y']]
 
 # paraheat object from dummy data
-h = ParaHeat('2', tmp_p, None)
+h = ParaHeat2D('2', tmp_p, None)
 h.heatmap = h.binned_statistic(bins=25) # this is tested in other test class
 
 def test_ttest_per_bin():
