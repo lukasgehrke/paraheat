@@ -1,0 +1,72 @@
+@startuml
+LevelContainer : name
+LevelContainer : data
+LevelContainer : design_matrix
+LevelContainer : model
+LevelContainer : parse_model()
+LevelContainer : parse_categorical_predictors()
+
+FirstLevel <|-- LevelContainer
+FirstLevel : fit()
+FirstLevel : inspect_fit()
+FirstLevel : create_paraheats()
+FirstLevel : aggregate()
+FirstLevel : zero_to_nan()
+FirstLevel : standardize()
+FirstLevel : export_heatmaps()
+
+OLS <|-- FirstLevel
+OLS : fit()
+OLS : inspect_fit()
+
+GLM <|-- FirstLevel
+GLM : fit()
+GLM : inspect_fit()
+
+Independent_T <|-- FirstLevel
+Independent_T : fit()
+Independent_T : inspect_fit()
+
+Paired_T <|-- FirstLevel
+Paired_T : fit()
+Paired_T : inspect_fit()
+
+one_way_ANOVA <|-- FirstLevel
+one_way_ANOVA : fit()
+one_way_ANOVA : inspect_fit()
+
+rm_ANOVA <|-- FirstLevel
+rm_ANOVA : fit()
+rm_ANOVA : inspect_fit()
+
+Modeling : OLS_fit()
+Modeling : robust_OLS_fit()
+Modeling : binomial_GLM_fit()
+Modeling : ttest_trimmed_mean()
+Modeling : two_way_rmANOVA()
+
+interface MCC
+MCC : bonferroni()
+MCC : fdr()
+
+MCC_MNE <|-- MCC
+MCC_MNE : mne_spatio_temporal_cluster_test()
+MCC_MNE : mne_spatio_temporal_cluster_1samp_test()
+
+Plot : create_figure_axes()
+Plot : make_cm_transparent()
+Plot : make_divergent_cm_transparent()
+Plot : get_image_extent()
+Plot : add_background_image()
+Plot : add_heat()
+Plot : remove_islands()
+Plot : gaussian()
+Plot : poly_mask()
+Plot : clip_img_poly_patch()
+Plot : add_colorbar()
+Plot : set_labelnames()
+Plot : add_formatted_legend()
+Plot : format_axes()
+Plot : show()
+Plot : export()
+@enduml

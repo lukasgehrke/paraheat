@@ -20,7 +20,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ParaHeat:
-    """Wrapper class built around scipy's binned_statistic functions
+    """Simple wrapper class built around scipy's binned_statistic functions
 
     Returns:
         [type]: [description]
@@ -28,7 +28,7 @@ class ParaHeat:
 
     name: str
     data: pd.DataFrame
-    heatmap: None
+    heatmap: None # TODO refactoring: rename to binned_statistic
 
     def __post_init__(self):
 

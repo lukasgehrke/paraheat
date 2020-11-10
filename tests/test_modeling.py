@@ -3,8 +3,7 @@ import pandas as pd
 import statsmodels.api as sm
 
 # import class
-from heat.paraheat import ParaHeat2D
-import heat.modeling as modeling
+import heat.modeling
 
 # TODO create a dummy paraheat object from dummy data for testing purposes
 # rng = np.random.default_rng()
@@ -16,9 +15,7 @@ tread_plow_whigh = pd.read_csv('/Users/lukasgehrke/Documents/temp/chatham/crd_ga
 tmp_p = tread_plow_whigh[tread_plow_whigh['pID'] == 2]
 tmp_p = tmp_p[['X', 'Y']]
 
-# paraheat object from dummy data
-h = ParaHeat2D('2', tmp_p, None)
-h.heatmap = h.binned_statistic(bins=25) # this is tested in other test class
+# TODO paraheat object from dummy data
 
 def test_ttest_per_bin():
 
@@ -33,8 +30,7 @@ def test_ttest_per_bin():
     # design = df.insert(5, 'condition', dmatrix, True)
     # design.columns = ['A', 'B', 'C', 'D', 'design']
 
-    m = Modeling()
-    res = m.ttest_per_bin(df, "conds", cond1, cond2)
+    res = ttest_per_bin(df, "conds", cond1, cond2)
 
 def test_OLS():
 
@@ -44,7 +40,7 @@ def test_OLS():
     df = df[vars]
     df = df.dropna()
 
-    pars, rsq = Modeling.fit_OLS(df, 'Lottery ~ Literacy + Wealth')
+    pars, rsq = fit_OLS(df, 'Lottery ~ Literacy + Wealth')
 
     assert pars.shape[0] == 3, "intercept plus number of regressors is returned"
 
@@ -56,7 +52,7 @@ def test_RLM():
     df = df[vars]
     df = df.dropna()
 
-    pars, bse = Modeling.fit_robust_lm(df, 'Lottery ~ Literacy + Wealth')
+    pars, bse = fit_robust_lm(df, 'Lottery ~ Literacy + Wealth')
 
     assert pars.shape[0] == 3, "intercept plus number of regressors is returned"
 
@@ -71,5 +67,5 @@ def test_fit_lm_per_bin():
     crd_1s.reset_index(drop=True, inplace=True)
     data = pd.concat([crd_1s, reg], axis=1)
 
-    pars, bse = Modeling.fit_lm_per_bin(data, 'pixel ~ reg')
+    pars, bse = fit_lm_per_bin(data, 'pixel ~ reg')
 

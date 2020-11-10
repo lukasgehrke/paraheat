@@ -1,4 +1,4 @@
-import heat.processing
+import heat.signal_processing
 
 def test_zscore():
     pass

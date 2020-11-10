@@ -97,3 +97,5 @@ env-ph/
 .pytest-cache
 Support/
 src/ressources/
+tests/tutorials/.test_lm.ipynb.icloud
+*.pkl

@@ -1,7 +1,7 @@
 import pandas as pd
 
 # import class
-from heat.paraheat import ParaHeat2D
+# from heat.paraheat import ParaHeat2D
 
 # TODO generate random data
 

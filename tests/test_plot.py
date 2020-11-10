@@ -39,6 +39,13 @@ def test_get_transparant_colormap():
     assert np.min(my_cm._lut) == 0, "min of alpha in colormap is 0"
     assert np.max(my_cm._lut) == 1, "max of alpha in colormap is 0"
 
+def test_get_transparant_diverging_colormap():
+
+    cmap = plt.cm.coolwarm
+    my_cm = ph.make_divergent_cm_transparent(cmap)
+    assert np.min(my_cm._lut) == 1, "min of alpha in colormap is 0"
+    assert np.max(my_cm._lut) == 1, "max of alpha in colormap is 0"
+
 def test_make_axes_publication_ready():
     pass
 
@@ -54,15 +61,21 @@ def test_make_plot():
     ph.add_background_image(bg_img, ax)
 
     mask = ret.statistic# > 1
-    levels = [15]
 
-    heat = ph.add_heat(ret.statistic, ax, extent, cm=my_cm, add_contour=True, contour_mask=mask, levels=levels)
+    lims = [-20,20]
+    sig_levels = 5
+    heat = ph.add_heat(ret.statistic, ax, extent, cm=my_cm, lims=lims, add_contour=True, contour_mask=mask, levels=sig_levels)
 
     ph.add_colorbar(heat, ax)
-
     ph.set_labelnames(ax, title="some title", xlabel="some x label", ylabel="some y label")
     ph.format_axes(ax)
     ph.show()
+
+def test_remove_islands():
+
+    mask = ret.statistic
+    mask1 = ph.gaussian(mask)
+    assert mask.shape == mask1.shape
 
 def test_poly_mask():
 
